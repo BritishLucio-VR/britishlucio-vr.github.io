@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LucioTiers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --bg: #050509;
+      --bg-alt: #0b0b12;
+      --accent: #6b5bff;
+      --accent-soft: rgba(107, 91, 255, 0.2);
+      --text: #f5f5ff;
+      --muted: #9a9ab5;
+      --danger: #ff4b6b;
+      --border: #1b1b2b;
+      --tier-s: #4caf50;
+      --tier-a: #7cb342;
+      --tier-b: #ffc107;
+      --tier-c: #ff9800;
+      --tier-d: #f44336;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #181830 0, #050509 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* NAVBAR */
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 7vw;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(to right, rgba(7,7,15,0.95), rgba(7,7,15,0.98));
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ffffff 0, #6b5bff 35%, #11111b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      box-shadow: 0 0 18px rgba(107, 91, 255, 0.7);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 18px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a {
+      padding: 6px 10px;
+      border-radius: 999px;
+      transition: 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+    }
+
+    .nav-links a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.15s ease;
+    }
+
+    .btn-ghost {
+      border-color: var(--border);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent-soft);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6b5bff, #9b5bff);
+      border-color: rgba(255,255,255,0.08);
+      box-shadow: 0 0 18px rgba(107, 91, 255, 0.6);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff4b6b, #ff6b8b);
+      border-color: rgba(255,255,255,0.08);
+      box-shadow: 0 0 18px rgba(255, 75, 107, 0.6);
+    }
+
+    .btn-danger:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    /* LAYOUT */
+
+    .page {
+      flex: 1;
+      padding: 26px 7vw 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+      gap: 26px;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .nav {
+        padding-inline: 16px;
+      }
+    }
+
+    /* LEFT COLUMN */
+
+    .hero-card {
+      background: radial-gradient(circle at top left, rgba(107,91,255,0.18), rgba(5,5,9,0.96));
+      border-radius: 18px;
+      padding: 22px 22px 20px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow:
+        0 24px 60px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(255,255,255,0.02);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-pill-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      background: rgba(5,5,9,0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4caf50;
+      box-shadow: 0 0 8px rgba(76,175,80,0.9);
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 3vw, 32px);
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      margin-bottom: 8px;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .hero-meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 10px;
+      color: #6f6fa0;
+      margin-bottom: 3px;
+    }
+
+    .hero-meta-value {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(107,91,255,0.45), transparent 60%);
+      top: -80px;
+      right: -40px;
+      opacity: 0.7;
+      pointer-events: none;
+      filter: blur(2px);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .hero-footer-strip {
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .hero-footer-strip span strong {
+      color: var(--text);
+    }
+
+    .hero-footer-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge-soft {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #8f8fb0;
+    }
+
+    /* TIER LIST PREVIEW */
+
+    .tiers-card {
+      margin-top: 18px;
+      background: rgba(5,5,9,0.96);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    .tiers-header {
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .tiers-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tiers-header-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .tiers-header-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .tiers-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4caf50;
+      box-shadow: 0 0 8px rgba(76,175,80,0.9);
+    }
+
+    .tiers-body {
+      padding: 10px 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .tier-row {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tier-label {
+      border-radius: 8px;
+      padding: 6px 0;
+      text-align: center;
+      font-weight: 700;
+      color: #050509;
+      text-shadow: 0 0 6px rgba(0,0,0,0.4);
+    }
+
+    .tier-label.s { background: var(--tier-s); }
+    .tier-label.a { background: var(--tier-a); }
+    .tier-label.b { background: var(--tier-b); }
+    .tier-label.c { background: var(--tier-c); }
+    .tier-label.d { background: var(--tier-d); }
+
+    .tier-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tier-item {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* RIGHT COLUMN */
+
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--bg-alt);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 16px 16px 14px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #8f8fb0;
+      margin-bottom: 8px;
+    }
+
+    .panel-main {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .panel-main strong {
+      color: var(--text);
+    }
+
+    .panel-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .google-btn {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #202124;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 500;
+      transition: 0.12s ease;
+    }
+
+    .google-btn:hover {
+      filter: brightness(0.97);
+      transform: translateY(-0.5px);
+    }
+
+    .google-logo {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      background:
+        conic-gradient(from 45deg,
+          #ea4335 0 25%,
+          #fbbc05 25% 50%,
+          #34a853 50% 75%,
+          #4285f4 75% 100%);
+      position: relative;
+    }
+
+    .google-logo::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .panel-footer {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .panel-footer a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 2px;
+    }
+
+    .panel-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .panel-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #8f8fb0;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .panel-glow {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(107,91,255,0.35), transparent 60%);
+      bottom: -80px;
+      right: -40px;
+      opacity: 0.7;
+      pointer-events: none;
+      filter: blur(1px);
+    }
+
+    /* FOOTER */
+
+    .footer {
+      padding: 10px 7vw 16px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #050509;
+    }
+
+    .footer a {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="nav-left">
+      <div class="logo-circle">L</div>
+      <div class="brand-text">
+        <div class="brand-title">LucioTiers</div>
+        <div class="brand-sub">Minecraft Tier Hub</div>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#community">Community</a>
+      <a href="#how-it-works">How it works</a>
+    </nav>
+
+    <div class="nav-right">
+      <button class="btn btn-ghost" id="fakeProfileBtn" style="display:none;">
+        <span id="fakeProfileName">Player</span>
+      </button>
+      <button class="btn btn-primary" id="loginBtn">
+        <span>Sign in</span>
+      </button>
+      <button class="btn btn-danger" id="logoutBtn" style="display:none;">
+        <span>Sign out</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN PAGE -->
+  <main class="page">
+
+    <!-- LEFT: HERO + TIER PREVIEW -->
+    <section>
+      <div class="hero-card">
+        <div class="hero-grid"></div>
+        <div class="hero-glow"></div>
+
+        <div class="hero-pill-row">
+          <div class="pill">
+            <span class="pill-dot"></span>
+            LIVE TIER META
+          </div>
+          <div class="pill">
+            BUILT FOR SMPS
+          </div>
+        </div>
+
+        <h1 class="hero-title">Rank every Minecraft player, item, and strat.</h1>
+        <p class="hero-sub">
+          LucioTiers is your clean, fast, no‑nonsense tier list hub for Minecraft SMPs, PvP, plugins, and chaos.
+          Log in with Google, create lists, and share them with your server or community.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="heroCreateBtn">
+            ⚡ Create a tier list
+          </button>
+          <button class="btn btn-ghost" id="heroBrowseBtn">
+            👀 Browse community lists
+          </button>
+        </div>
+
+        <div class="hero-meta-row">
+          <div>
+            <div class="hero-meta-label">Latency</div>
+            <div class="hero-meta-value">Static site, instant loads</div>
+          </div>
+          <div>
+            <div class="hero-meta-label">Auth</div>
+            <div class="hero-meta-value">Google Login (Firebase ready)</div>
+          </div>
+          <div>
+            <div class="hero-meta-label">Host</div>
+            <div class="hero-meta-value">GitHub Pages + custom domain</div>
+          </div>
+        </div>
+
+        <div class="hero-footer-strip">
+          <span>
+            <strong>LucioTiers</strong> is currently in <strong>prototype mode</strong>. Data is stored locally until Firebase is wired.
+          </span>
+          <div class="hero-footer-badges">
+            <span class="badge-soft">No ads</span>
+            <span class="badge-soft">No trackers</span>
+            <span class="badge-soft">Open config</span>
+          </div>
+        </div>
+
+        <div class="tiers-card" id="community">
+          <div class="tiers-header">
+            <div class="tiers-header-left">
+              <div class="tiers-header-title">Example: DonutSMP PvP Players</div>
+              <div class="tiers-header-sub">Static demo — your real lists will show here once we hook Firestore.</div>
+            </div>
+            <div class="tiers-header-right">
+              <div class="status-dot"></div>
+              <span>Preview only</span>
+            </div>
+          </div>
+          <div class="tiers-body">
+            <div class="tier-row">
+              <div class="tier-label s">S</div>
+              <div class="tier-items">
+                <div class="tier-item">SweatLord_97</div>
+                <div class="tier-item">ComboKing</div>
+                <div class="tier-item">GappleGoblin</div>
+              </div>
+            </div>
+            <div class="tier-row">
+              <div class="tier-label a">A</div>
+              <div class="tier-items">
+                <div class="tier-item">BridgeDemon</div>
+                <div class="tier-item">RodAbuser</div>
+                <div class="tier-item">PearlClutcher</div>
+              </div>
+            </div>
+            <div class="tier-row">
+              <div class="tier-label b">B</div>
+              <div class="tier-items">
+                <div class="tier-item">TotemEnjoyer</div>
+                <div class="tier-item">ShieldSpammer</div>
+              </div>
+            </div>
+            <div class="tier-row">
+              <div class="tier-label c">C</div>
+              <div class="tier-items">
+                <div class="tier-item">LavaBucketGuy</div>
+                <div class="tier-item">BowOnly</div>
+              </div>
+            </div>
+            <div class="tier-row">
+              <div class="tier-label d">D</div>
+              <div class="tier-items">
+                <div class="tier-item">LogsOutMidFight</div>
+                <div class="tier-item">StillUsingStoneSword</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT: LOGIN + HOW IT WORKS -->
+    <aside class="side-column">
+
+      <section class="panel">
+        <div class="panel-glow"></div>
+        <h2 class="panel-title">Login</h2>
+        <div class="panel-main">
+          <strong>Sign in with Google to save your tier lists.</strong>
+        </div>
+        <p class="panel-sub">
+          This button is wired to a <strong>fake login</strong> for now so you can see the flow.
+          When we plug in Firebase, this becomes real Google OAuth.
+        </p>
+
+        <button class="google-btn" id="googleFakeBtn">
+          <span class="google-logo"></span>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="panel-footer">
+          We’ll only simulate a username locally. No real data is sent anywhere in this prototype.
+        </div>
+      </section>
+
+      <section class="panel" id="how-it-works">
+        <h2 class="panel-title">How LucioTiers works</h2>
+        <div class="panel-main">
+          <strong>1.</strong> Log in with Google<br>
+          <strong>2.</strong> Create a tier list (players, items, strats)<br>
+          <strong>3.</strong> Share a link with your SMP or community
+        </div>
+        <p class="panel-sub">
+          Under the hood, this will run on <strong>Firebase Auth</strong> + <strong>Firestore</strong>, fully static on
+          GitHub Pages with a free custom domain. No backend server to babysit.
+        </p>
+        <div class="panel-tag-row">
+          <span class="panel-tag">GitHub Pages</span>
+          <span class="panel-tag">Firebase Ready</span>
+          <span class="panel-tag">Minecraft SMP</span>
+          <span class="panel-tag">Tier Lists</span>
+        </div>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span>LucioTiers · prototype UI</span>
+    <span>Hosted on GitHub Pages · Configurable with Firebase + custom domain</span>
+  </footer>
+
+  <script>
+    // Simple fake login state so you can see the flow without Firebase yet
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const fakeProfileBtn = document.getElementById('fakeProfileBtn');
+    const fakeProfileName = document.getElementById('fakeProfileName');
+    const googleFakeBtn = document.getElementById('googleFakeBtn');
+    const heroCreateBtn = document.getElementById('heroCreateBtn');
+    const heroBrowseBtn = document.getElementById('heroBrowseBtn');
+
+    function setLoggedIn(name) {
+      fakeProfileName.textContent = name || 'Lucio';
+      fakeProfileBtn.style.display = 'inline-flex';
+      logoutBtn.style.display = 'inline-flex';
+      loginBtn.style.display = 'none';
+    }
+
+    function setLoggedOut() {
+      fakeProfileBtn.style.display = 'none';
+      logoutBtn.style.display = 'none';
+      loginBtn.style.display = 'inline-flex';
+    }
+
+    googleFakeBtn.addEventListener('click', () => {
+      setLoggedIn('Lucio');
+      alert('Fake login successful. When we wire Firebase, this will be real Google sign‑in.');
+    });
+
+    loginBtn.addEventListener('click', () => {
+      googleFakeBtn.click();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      setLoggedOut();
+      alert('Signed out (locally).');
+    });
+
+    heroCreateBtn.addEventListener('click', () => {
+      alert('This will open the tier editor page once we build it.');
+    });
+
+    heroBrowseBtn.addEventListener('click', () => {
+      document.getElementById('community').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Start logged out
+    setLoggedOut();
+  </script>
+
+</body>
+</html>
